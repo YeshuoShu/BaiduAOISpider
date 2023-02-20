@@ -36,7 +36,7 @@ class APIHandler(object):
             name = df.loc[idx, 'name']
             lng, lat = df.loc[idx, 'lng_wgs84'], df.loc[idx, 'lat_wgs84']
             prim_ind, sec_ind = df.loc[idx, 'prim_ind'], df.loc[idx, 'sec_ind']
-            url = f'http://api.map.baidu.com/place/v2/search?'\
+            url = f'https://api.map.baidu.com/place/v2/search?'\
                   f'query={name}'\
                   f'&location={lat},{lng}'\
                   f'&radius={Repo._radius}'\
