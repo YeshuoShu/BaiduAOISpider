@@ -48,7 +48,7 @@
   
   * 如果想在搜索中限定 POI 的种类，还可以添加`prim_ind`（[百度标准](https://lbsyun.baidu.com/index.php?title=open/poitags)的 POI 一级行业分类）和`sec_ind`（二级行业分类）两个参数[^6]
 
-* 将 uid 填入查询 AOI 的 url：`http://map.baidu.com/?newmap=1&qt=ext&uid=查询到的uid&ext_ver=new&ie=utf-8&l=11`，然后提取几何形状，如果该几何形状满足 AOI 的筛选条件（例如其四至范围[^7]必须包含 POI 的经纬度等等），将该几何形状存入 AOI 容器中。这样对于每个原始 POI 能获取到一个可能的 AOI 列表
+* 将 uid 填入查询 AOI 的 url：`https://map.baidu.com/?newmap=1&qt=ext&uid=查询到的uid&ext_ver=new&ie=utf-8&l=11`，然后提取几何形状，如果该几何形状满足 AOI 的筛选条件（例如其四至范围[^7]必须包含 POI 的经纬度等等），将该几何形状存入 AOI 容器中。这样对于每个原始 POI 能获取到一个可能的 AOI 列表
 
 * 根据`settings.py`中`FILTER_RULES`的设置，计算 AOI 列表的综合排序值，将排序第一位的 AOI 作为最终匹配的 AOI
 
@@ -109,7 +109,7 @@
   }
   ```
 
-* 对每一个 uid，拼接并访问 url，例如：<http://map.baidu.com/?newmap=1&qt=ext&uid=ddfd7c2d8db36cf39ee3219e&ext_ver=new&ie=utf-8&l=11>，返回结果形如：
+* 对每一个 uid，拼接并访问 url，例如：<https://map.baidu.com/?newmap=1&qt=ext&uid=ddfd7c2d8db36cf39ee3219e&ext_ver=new&ie=utf-8&l=11>，返回结果形如：
 
   ```json
   {
@@ -253,6 +253,8 @@
   * 如果使用随机代理，需要在`middlewares.py`中设置代理池：
 
     * 本项目默认采用的代理池来自 [proxy_pool](https://github.com/jhao104/proxy_pool) 项目，需要按照该项目进行额外配置
+
+    * AOI 查询 url 是 HTTPS 协议，因此**使用的随机代理也要支持 https 协议**
 
     * 如果自己搭建代理池，还需要构造获取一个随机代理和删除某一个代理的 2 个函数，并替换`middlewares.py`中的`get_proxy`和`delete_proxy`
 

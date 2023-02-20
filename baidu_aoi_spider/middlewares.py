@@ -11,7 +11,7 @@ class BaiduAOIMiddleware(RetryMiddleware):
         proxy pool is built with reference to https://github.com/jhao104/proxy_pool
         """
         proxy = requests.get('http://127.0.0.1:5000/get/').json()
-        return f'http://{proxy["proxy"]}'
+        return f'https://{proxy["proxy"]}'
 
     def delete_proxy(self, proxy) -> None:
         requests.get(f'http://127.0.0.1:5000/delete/?proxy={proxy}')

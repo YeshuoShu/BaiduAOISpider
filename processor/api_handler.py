@@ -125,7 +125,7 @@ class APIHandler(object):
         """
         Construct a `Baidu AOI` url with this AOI's `uid`.
         """
-        return f'http://map.baidu.com/?newmap=1&qt=ext&'\
+        return f'https://map.baidu.com/?newmap=1&qt=ext&'\
                f'uid={uid}&ext_ver=new&ie=utf-8&l=11'
 
     @staticmethod
