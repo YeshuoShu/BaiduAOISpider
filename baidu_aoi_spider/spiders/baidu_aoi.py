@@ -13,22 +13,24 @@ class BaiduAOISpider(scrapy.Spider):
     @classmethod
     def from_crawler(cls, crawler):
         # bind a close_spider method
-        spider = cls(crawler.settings.copy_to_dict())
+        spider = super(BaiduAOISpider, cls).from_crawler(
+            crawler, crawler.settings.copy_to_dict()
+        )
         crawler.signals.connect(spider.close_spider, signal=scrapy.signals.spider_closed)
         return spider
 
     def __init__(self, settings):
         settings = self.deep_update(settings, self.updating_settings)
-        # import and validate global & updating settings
+        # import and validate settings
         Repo.import_settings(settings)
         Validator.validate_settings()
-        # load and validate POI file
+        # load file and validate it
         Repo.load_file()
         Validator.validate_file()
-        # file preparation
+        # prepare file for writing
         FileOperator.add_cols()
         FileOperator.convert_crs_to_wgs84()
-        # counter and aoi container initialization
+        # counter and AOI container initialization
         Counter.boot()
         AOIContainer.mold()
         
