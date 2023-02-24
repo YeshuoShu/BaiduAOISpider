@@ -40,15 +40,14 @@ class Logger(object):
         avg_speed, _ = Counter._cal_speed_xTime()
         total_time = Counter._total_time()
         poi_missing = Counter._count_missing()
+        poi_matched = Counter._count_status()[0]
         missing_prop = poi_missing / Counter._poi_num
         matched_prop = Counter._count_status()[0] / Counter._poi_num
-        crawled_prop = (Counter._poi_num - poi_missing) / Counter._poi_num
         logging.warning('# ---------- Crawling Ended ---------- #')
-        logging.warning(f'Avg speed: {avg_speed}. Total crawling time: {total_time}.')
-        logging.warning(f'{matched_prop:.2%} POIs are matched. '\
-                        f'{crawled_prop:.2%} POIs are crawled (Matched, No Uid, No Geometry).')
+        logging.warning(f'-- Avg speed: {avg_speed}. Total crawling time: {total_time}.')
+        logging.warning(f'-- {poi_matched} ({matched_prop:.2%}) POIs are matched.')
         if poi_missing:
-            logging.warning(f'{poi_missing} ({missing_prop:.2%}) POIs are missing. '\
+            logging.warning(f'-- {poi_missing} ({missing_prop:.2%}) POIs are missing. '\
                             f'Re-crawling is recommended.')
         else:
-            logging.warning('All POIs are crawled. Re-crawling is not needed.')
+            logging.warning('-- All POIs are crawled. Re-crawling is not needed.')
