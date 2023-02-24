@@ -51,7 +51,7 @@ class BaiduAOISpider(scrapy.Spider):
             if uid_name_rank_triples:
                 # record how many uids are available for this POI
                 Counter.write_aoi_total_num(idx, len(uid_name_rank_triples))
-                # If `USE_FIRST_UID` is on, only the first search result will be requested
+                # if `USE_FIRST_UID` is on, only the first search result will be requested
                 for uid_name, uid, rank in uid_name_rank_triples:
                     url = APIHandler.assemble_aoi_url(uid)
                     yield self.request_aoi(url, idx=idx, uid_name=uid_name, rank=rank)
@@ -72,7 +72,7 @@ class BaiduAOISpider(scrapy.Spider):
         except Exception as e:
             Logger.log_aoi_fail(e, idx, uid_name)
         finally:
-            # count an AOI url is called
+            # count that one AOI of this POI is called
             Counter.count_aoi_called(idx)
             # if all AOIs of this POI are called,
             # find the best AOI and record it if exists

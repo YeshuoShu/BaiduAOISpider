@@ -19,7 +19,7 @@ class Logger(object):
     def log_start(cls) -> None:
         logging.warning(f'# ---------- Crawling Started ---------- #')
         logging.warning(f'-- POI total number: {Counter._poi_num}.')
-        logging.warning(f'-- POIs to crawl: {Counter._poi_to_crawl}.')
+        logging.warning(f'-- POIs to be crawled: {Counter._poi_to_crawl}.')
         cls.log_progress()
 
     @staticmethod

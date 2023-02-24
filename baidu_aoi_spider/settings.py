@@ -81,7 +81,7 @@ API_PARAMS = {
    	# To avoid missing out POIs, it is recommended to set it slightly higher, e.g. 2000.
    	'radius': 2000,  # unit: meters
    	# 2.2 Radius limit
-   	# If true, it is said that only POIs within retrieval radius will be returned.
+   	# It is said that only POIs within retrieval radius will be returned if set to 'true'.
    	'radius_limit': 'true',  # 'true' or 'false'
    	# 3. Coordinate system
    	'crs': 'wgs84',  # 'gcj02', 'bd09' or 'wgs84'
@@ -101,7 +101,7 @@ FILTER_RULES = {
 	'min_similarity': 0,  # 0 to disable, maximum is 1
 	# 3. AOI sorting rules, set to 0 to disable
 	'sort_by_search_rank': 1,  # the higher the rank, the more relevant, the better
-	'sort_by_area': 0,  # 1 for the smaller the better, -1 for the higher the better
+	'sort_by_area': 0,  # 1 for the smaller the better, -1 for the bigger the better
 	'sort_by_distance': 1,  # the closer the AOI's geometry to POI, the better
 	'sort_by_similarity': 1,  # the more similar the name of AOI to POI, the better
 }
