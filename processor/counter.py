@@ -74,7 +74,7 @@ class Counter(object):
         else:
             avg_speed = poi_crawled / time_elapsed
         # expected remaining time
-        poi_remaining = Counter._poi_to_crawl - poi_matched
+        poi_remaining = Counter._poi_to_crawl - poi_crawled
         if avg_speed == 0:
             xTime = 'Inf'
         else:
