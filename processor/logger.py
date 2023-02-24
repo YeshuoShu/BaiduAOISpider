@@ -9,17 +9,17 @@ class Logger(object):
         # log only when status changes
         if Counter._status != status:
             Counter._status = status
-            crawled, no_uid, no_geometry = status
+            matched, no_uid, no_geometry = status
             logging.warning(
-                f'C/N_Uid/N_Geo/Total: '\
-                f'{crawled}/{no_uid}/{no_geometry}/{Counter._poi_num}'
+                f'Matched/No Uid/No Geometry/Total: '\
+                f'{matched}/{no_uid}/{no_geometry}/{Counter._poi_num}'
             )
 
     @classmethod
     def log_start(cls) -> None:
         logging.warning(f'# ---------- Crawling Started ---------- #')
         logging.warning(f'-- POI total number: {Counter._poi_num}.')
-        logging.warning(f'-- POIs to be crawled: {Counter._poi_to_crawl}.')
+        logging.warning(f'-- POIs to crawl: {Counter._poi_to_crawl}.')
         cls.log_progress()
 
     @staticmethod
@@ -40,7 +40,15 @@ class Logger(object):
         avg_speed, _ = Counter._cal_speed_xTime()
         total_time = Counter._total_time()
         poi_missing = Counter._count_missing()
-        crawled_prop = Counter._count_status()[0] / Counter._poi_num
+        missing_prop = poi_missing / Counter._poi_num
+        matched_prop = Counter._count_status()[0] / Counter._poi_num
+        crawled_prop = (Counter._poi_num - poi_missing) / Counter._poi_num
         logging.warning('# ---------- Crawling Ended ---------- #')
         logging.warning(f'Avg speed: {avg_speed}. Total crawling time: {total_time}.')
-        logging.warning(f'{poi_missing} POIs missing. {crawled_prop:.2%} POIs crawled.')
+        logging.warning(f'{matched_prop:.2%} POIs are matched. '\
+                        f'{crawled_prop:.2%} POIs are crawled (Matched, No Uid, No Geometry).')
+        if poi_missing:
+            logging.warning(f'{poi_missing} ({missing_prop:.2%}) POIs are missing. '\
+                            f'Re-crawling is recommended.')
+        else:
+            logging.warning('All POIs are crawled. Re-crawling is not needed.')

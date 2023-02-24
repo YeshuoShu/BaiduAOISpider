@@ -10,7 +10,7 @@ class FileOperator(object):
     def add_cols() -> None:
         """
         In the output `AOI csv`, five additional columns will be added:
-            - status (str): 'Crawled', 'No Uid Available' or 'No Geometry Accepted'
+            - status (str): 'Matched', 'No Uid' or 'No Geometry'
             - uid_name (str): name of the uid whose geometry is chosen
             - lng_wgs84 (float)/lat_wgs84 (float): longitude/latitude in wgs84 CRS
             - geometry (`wkt`, well known text): AOI polygon geometry
@@ -49,7 +49,7 @@ class FileOperator(object):
         """
         Write the best AOI geometry and crawling status into the file.
         """
-        Repo.file.loc[idx,'status'] = 'Crawled'
+        Repo.file.loc[idx,'status'] = 'Matched'
         Repo.file.loc[idx, 'geometry'] = best_aoi.geometry
         Repo.file.loc[idx, 'uid_name'] = best_aoi.uid_name
 

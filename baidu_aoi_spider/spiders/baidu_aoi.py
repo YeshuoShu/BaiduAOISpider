@@ -57,7 +57,7 @@ class BaiduAOISpider(scrapy.Spider):
                     yield self.request_aoi(url, idx=idx, uid_name=uid_name, rank=rank)
             else:
                 # no uid found, skip this POI
-                Repo.file.loc[idx, 'status'] = 'No Uid Available'
+                Repo.file.loc[idx, 'status'] = 'No Uid'
                 Logger.log_progress()
         except Exception as e:
             Logger.log_uid_fail(e, idx)
@@ -81,7 +81,7 @@ class BaiduAOISpider(scrapy.Spider):
                 if best_aoi:
                     FileOperator.write_aoi_and_status(idx, best_aoi)
                 else:
-                    Repo.file.loc[idx, 'status'] = 'No Geometry Accepted'
+                    Repo.file.loc[idx, 'status'] = 'No Geometry'
                 Logger.log_progress()
             # update file periodically
             if Counter.reach_update_interval():

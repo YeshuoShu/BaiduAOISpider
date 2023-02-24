@@ -48,11 +48,11 @@
   
   * 如果想在搜索中限定 POI 的种类，还可以添加 `prim_ind`（[百度标准](https://lbsyun.baidu.com/index.php?title=open/poitags)的 POI 一级行业分类）和 `sec_ind`（二级行业分类）两个参数[^7]
 
-  * 如果这一步没有检索到任何 uid，那么将爬取状态设置为 `No Uid Available`，在运行日志中简写为 `N_Uid`
+  * 如果这一步没有检索到任何 uid，那么将爬取状态设置为 `No Uid`，在运行日志中简写为 `N_Uid`
 
 * 将 uid 填入查询 AOI 的 url：`https://map.baidu.com/?newmap=1&qt=ext&uid=查询到的uid&ext_ver=new&ie=utf-8&l=11`，然后提取几何形状，如果该几何形状满足 AOI 的筛选条件（例如其四至范围[^8]必须包含 POI 的经纬度等等），将该几何形状存入 AOI 容器中。这样对于每个原始 POI 能获取到一个可能的 AOI 列表
 
-  * 如果这一步所有 AOI 都满足筛选条件，那么将爬取状态设置为 `No Geometry Accepted`，在运行日志中简写为 `N_Geo`
+  * 如果这一步所有 AOI 都满足筛选条件，那么将爬取状态设置为 `No Geometry`，在运行日志中简写为 `N_Geo`
 
 * 根据 `settings.py` 中 `FILTER_RULES` 的设置，计算 AOI 列表的综合排序值，将排序第一位的 AOI 作为最终匹配的 AOI
 
@@ -66,7 +66,7 @@
 
     * 因此最终匹配的 AOI 为第三个
 
-  * 匹配到 AOI 后，将爬取状态设置为 `Crawled`，在运行日志中简写为 `C`
+  * 匹配到 AOI 后，将爬取状态设置为 `Matched`，在运行日志中简写为 `M`
 
 总结整个工作流程如下：
 

@@ -55,29 +55,26 @@ class Counter(object):
     def _count_status() -> Tuple[int, int, int]:
         def count(status: str) -> int:
             return Repo.file.status.eq(status).sum()
-        crawled = count('Crawled')
-        no_uid = count('No Uid Available')
-        no_geometry = count('No Geometry Accepted')
-        return crawled, no_uid, no_geometry
+        matched = count('Matched')
+        no_uid = count('No Uid')
+        no_geometry = count('No Geometry')
+        return matched, no_uid, no_geometry
 
     @classmethod
     def _count_missing(cls) -> int:
-        total = cls._poi_num
-        crawled, no_uid, no_geometry = cls._count_status()
-        cls.missing = total - crawled - no_uid - no_geometry
-        return cls.missing
+        return cls._poi_to_crawl - sum(cls._count_status())
 
     @classmethod
     def _cal_speed_xTime(cls) -> Tuple[str, str]:
         # average crawling speed
-        poi_crawled = cls._status[0] - cls._init_status[0]
+        poi_crawled = sum(cls._count_status()) - sum(cls._init_status)
         time_elapsed = cls._time - cls._init_time
         if time_elapsed == 0:
             return 'nan/s (nan/h)', 'nan'
         else:
             avg_speed = poi_crawled / time_elapsed
         # expected remaining time
-        poi_remaining = Counter._poi_to_crawl - poi_crawled
+        poi_remaining = Counter._poi_to_crawl - poi_matched
         if avg_speed == 0:
             xTime = 'Inf'
         else:
