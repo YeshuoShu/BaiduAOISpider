@@ -2,7 +2,7 @@ import random
 import string
 import requests
 from scrapy.utils.response import response_status_message
-from scrapy.downloadermiddlewares.retry import RetryMiddleware
+from scrapy.downloadermiddlewares.retry import RetryMiddleware, get_retry_request
 
 
 class BaiduAOIMiddleware(RetryMiddleware):
@@ -58,3 +58,16 @@ class BaiduAOIMiddleware(RetryMiddleware):
         ):
             request = self.alter_proxy_and_cookie(request)
             return self._retry(request, exception, spider)
+
+    def _retry(self, request, reason, spider):
+        max_retry_times = request.meta.get('max_retry_times', self.max_retry_times)
+        priority_adjust = request.meta.get('priority_adjust', self.priority_adjust)
+        retry_response = get_retry_request(
+            request,
+            reason=reason,
+            spider=spider,
+            max_retry_times=max_retry_times,
+            priority_adjust=priority_adjust,
+        )
+        if request.meta.get('retry_times') >= max_retry_times and retry_response is None:
+            raise Exception('Retry times exceeded')

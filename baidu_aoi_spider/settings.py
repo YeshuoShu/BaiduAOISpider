@@ -27,6 +27,10 @@ DOWNLOADER_MIDDLEWARES = {
 	'baidu_aoi_spider.middlewares.BaiduAOIMiddleware': 200,
 }
 
+# Retry settings
+RETRY_TIMES = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 403, 400, 302, 301]
+
 # Log level settings
 LOG_LEVEL = 'WARNING'
 
