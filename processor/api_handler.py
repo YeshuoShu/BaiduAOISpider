@@ -105,12 +105,12 @@ class APIHandler(object):
         # check status
         cls._check_status(status)
         # background POI property
-        p_property = cls._get_p_property(Repo.file, idx)
+        p_property = cls._get_poi_property(Repo.file, idx)
         # filter results
         if results:
             for rank, result in enumerate(results):
                 # extract uid's property
-                u_property = cls._get_u_property(result)
+                u_property = cls._get_uid_property(result)
                 # keep the result if it passes all the rules
                 if cls._pass_filter_rules(**p_property, **u_property):
                     name_uid_rank.append(
@@ -192,7 +192,7 @@ class APIHandler(object):
             raise Exception(f'API Error: {status}.')
 
     @staticmethod
-    def _get_p_property(df: pd.DataFrame, idx: int) -> dict:
+    def _get_poi_property(df: pd.DataFrame, idx: int) -> dict:
         radius = Repo._radius / 1000  # convert to km
         p_lng, p_lat = df.loc[idx, 'lng_wgs84'], df.loc[idx, 'lat_wgs84']
         if Repo._prim_ind == 'AS_VAR':
@@ -212,7 +212,7 @@ class APIHandler(object):
         )
 
     @staticmethod
-    def _get_u_property(result: dict) -> dict:
+    def _get_uid_property(result: dict) -> dict:
         return dict(
             uid=result.get('uid'),
             uid_name=result.get('name'),
