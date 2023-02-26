@@ -242,10 +242,10 @@ class APIHandler(object):
         if not within_distance(u_lng, u_lat, p_lng, p_lat, distance=radius):
             return False
         # 3. check if industry category is consistent
-        if p_prim_ind and p_sec_ind:
-            p_tag = f'{p_prim_ind};{p_sec_ind}'
+        if u_tag is None:
+            return True # if no industry category is provided, pass
+        elif ';' in u_tag:
+            u_prim_ind, u_sec_ind = u_tag.split(';')
+            return (p_prim_ind == u_prim_ind) and (p_sec_ind == u_sec_ind)
         else:
-            p_tag = p_prim_ind + p_sec_ind
-        if p_tag and (p_tag not in u_tag):
-            return False
-        return True
+            return (p_prim_ind in u_tag) or (p_sec_ind in u_tag)
