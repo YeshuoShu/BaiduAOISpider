@@ -52,7 +52,7 @@ class APIHandler(object):
         cls,
         idx: int,
         response: Response
-    ) -> (Exception | List[Tuple[str, str, int]]):
+    ) -> List[Tuple[str, str, int]]:
         """
         Parse the `Baidu uid` response, filter the results,
         and return a list of `(uid_name, uid, search_rank)` triples.
