@@ -4,7 +4,7 @@ from processor.repository import Repo
 
 class Validator(object):
     @classmethod
-    def validate_settings(cls) -> (TypeError | ValueError | FileNotFoundError | None):
+    def validate_settings(cls) -> None:
         cls._validate_spider_settings()
         cls._validate_path_settings()
         cls._validate_api_settings()
@@ -12,7 +12,7 @@ class Validator(object):
         logging.warning('(1/6) Settings validation complete.')
 
     @classmethod
-    def validate_file(cls) -> (ValueError | None):
+    def validate_file(cls) -> None:
         """
         `POI csv` should have the following columns:
         - Compulsory:
@@ -31,7 +31,7 @@ class Validator(object):
         logging.warning('(2/6) POI csv file validation complete.')
 
     @classmethod
-    def _validate_spider_settings(cls) -> (TypeError | ValueError | None):
+    def _validate_spider_settings(cls) -> None:
         # PROXY_ENABLED, USE_FIRST_UID is bool type
         cls._verify_value_type(Repo._proxy_enabled, 'PROXY_ENABLED', bool)
         cls._verify_value_type(Repo._use_first_uid, 'USE_FIRST_UID', bool)
@@ -39,7 +39,7 @@ class Validator(object):
         cls._verify_non_negative_num(Repo._update_interval, 'UPDATE_INTERVAL')
 
     @staticmethod
-    def _validate_path_settings() -> (FileNotFoundError | ValueError | None):
+    def _validate_path_settings() -> None:
         poi_dir = Repo._poi_csv_path
         aoi_dir = Repo._aoi_shp_path
         aoi_parent_dir = os.path.dirname(aoi_dir)
@@ -56,7 +56,7 @@ class Validator(object):
             logging.warning('(0/6) AOI_SHP_PATH parent directory created.')
 
     @classmethod
-    def _validate_api_settings(cls) -> (TypeError | ValueError | None):
+    def _validate_api_settings(cls) -> None:
         # AK_LIST must be a list of strings
         cls._verify_value_type(Repo._ak_list, 'AK_LIST', list)
         if not Repo._ak_list:
@@ -77,7 +77,7 @@ class Validator(object):
             raise ValueError('"crs" must be "gcj02", "bd09" or "wgs84".')
 
     @classmethod
-    def _validate_aoi_filter_settings(cls) -> (TypeError | ValueError | None):
+    def _validate_aoi_filter_settings(cls) -> None:
         # area limit must be a positive number
         cls._verify_non_negative_num(Repo._min_aoi_area, 'min_aoi_area')
         cls._verify_non_negative_num(Repo._max_aoi_area, 'max_aoi_area')
@@ -97,7 +97,7 @@ class Validator(object):
             raise ValueError('Sorting values must not be all 0.')
 
     @staticmethod
-    def _check_optional_col(name: str, value: str) -> (ValueError | None):
+    def _check_optional_col(name: str, value: str) -> None:
         if value == 'AS_VAR':
             if not name in Repo.file.columns:
                 raise ValueError(f'Column "{name}" is missing.')
@@ -107,7 +107,7 @@ class Validator(object):
         cls,
         value: any,
         name: str
-    ) -> (TypeError | ValueError | None):
+    ) -> None:
         cls._verify_value_type(value, name, float | int)
         if value < 0:
             raise ValueError(f'"{name}" must be a non-negative number.')
@@ -117,6 +117,6 @@ class Validator(object):
         value: any,
         name: str,
         type: bool | int | str | list | dict
-    ) -> (TypeError | None):
+    ) -> None:
         if not isinstance(value, type):
             raise TypeError(f'"{name}" must be a {str(type).replace("|", "or")}.')
