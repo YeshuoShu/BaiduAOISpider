@@ -11,8 +11,8 @@ class Logger(object):
             Counter._status = status
             matched, no_uid, no_geometry = status
             logging.warning(
-                f'Matched/No Uid/No Geometry/Total: '\
-                f'{matched}/{no_uid}/{no_geometry}/{Counter._poi_num}'
+                f'{matched}/{no_uid}/{no_geometry}/{Counter._poi_num} | '\
+                f'{sum(status)} ({sum(status)/Counter._poi_num:.2%})'
             )
 
     @classmethod
