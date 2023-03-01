@@ -1,8 +1,12 @@
 import random
 import string
 import requests
+from typing import Optional, Union
+from scrapy.spiders import Spider
+from scrapy.http.request import Request
+from scrapy.utils.python import global_object_name
 from scrapy.utils.response import response_status_message
-from scrapy.downloadermiddlewares.retry import RetryMiddleware, get_retry_request
+from scrapy.downloadermiddlewares.retry import RetryMiddleware
 
 
 class BaiduAOIMiddleware(RetryMiddleware):
@@ -62,12 +66,50 @@ class BaiduAOIMiddleware(RetryMiddleware):
     def _retry(self, request, reason, spider):
         max_retry_times = request.meta.get('max_retry_times', self.max_retry_times)
         priority_adjust = request.meta.get('priority_adjust', self.priority_adjust)
-        retry_response = get_retry_request(
+        return get_retry_request(
             request,
             reason=reason,
             spider=spider,
             max_retry_times=max_retry_times,
             priority_adjust=priority_adjust,
         )
-        if request.meta.get('retry_times') >= max_retry_times and retry_response is None:
-            raise Exception('Retry times exceeded')
+
+
+def get_retry_request(
+    request: Request,
+    *,
+    spider: Spider,
+    reason: Union[str, Exception] = 'unspecified',
+    max_retry_times: Optional[int] = None,
+    priority_adjust: Optional[int] = None,
+    stats_base_key: str = 'retry',
+):
+    """
+    Copied from scrapy source code and made minor changes.
+    """
+    settings = spider.crawler.settings
+    stats = spider.crawler.stats
+    retry_times = request.meta.get('retry_times', 0) + 1
+    if max_retry_times is None:
+        max_retry_times = request.meta.get('max_retry_times')
+        if max_retry_times is None:
+            max_retry_times = settings.getint('RETRY_TIMES')
+    if retry_times <= max_retry_times:
+        new_request: Request = request.copy()
+        new_request.meta['retry_times'] = retry_times
+        new_request.dont_filter = True
+        if priority_adjust is None:
+            priority_adjust = settings.getint('RETRY_PRIORITY_ADJUST')
+        new_request.priority = request.priority + priority_adjust
+
+        if callable(reason):
+            reason = reason()
+        if isinstance(reason, Exception):
+            reason = global_object_name(reason.__class__)
+
+        stats.inc_value(f'{stats_base_key}/count')
+        stats.inc_value(f'{stats_base_key}/reason_count/{reason}')
+        return new_request
+    else:
+        stats.inc_value(f'{stats_base_key}/max_reached')
+        return f'Gave up retrying {request} (failed {retry_times} times)'

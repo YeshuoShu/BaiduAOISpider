@@ -45,6 +45,7 @@ class BaiduAOISpider(scrapy.Spider):
 
     def parse_uid(self, response, idx):
         try:
+            self.check_retry_times(response)
             # uid_name_rank_triples is of the form:
             # [(uid_name1, uid1, search_rank1), (uid_name2, uid2, search_rank2), ...]
             uid_name_rank_triples = APIHandler.extract_uid_name_rank(idx, response)
@@ -64,6 +65,7 @@ class BaiduAOISpider(scrapy.Spider):
 
     def parse_aoi(self, response, idx, uid_name, rank):
         try:
+            self.check_retry_times(response)
             geometry = APIHandler.get_polygon_geometry(response)
             # if geometry exists and is valid,
             # append it to the AOI list of this POI
@@ -114,7 +116,12 @@ class BaiduAOISpider(scrapy.Spider):
             cb_kwargs=dict(**kwargs),
         )
         return self.request(url, **params)
-    
+
+    def check_retry_times(self, response) -> None:
+        if isinstance(response, str):
+            if response.startswith('Gave up retrying'):
+                raise Exception(response)
+
     def deep_update(self, base_dict: dict, updating_dict: dict) -> dict:
         updated_dict = base_dict.copy()
         for k, v in updating_dict.items():
