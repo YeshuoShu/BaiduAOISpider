@@ -191,7 +191,9 @@ POI csv 读取 → 每个 POI 信息拼接 url → 一个 url 返回一组 json 
 
 * 运行过程截图（示例 1 的情况）
 
-  <img src="images/running_process.png" width=80%>
+  * 爬取状态记录格式为 `Matched/No Uid/No Geometry/Total | Crawled (Percentage)`，从左至右含义：匹配到 AOI 的 POI 数量、地名检索中不存在 uid 的 POI 数量、没有返回 AOI 几何信息或所有 AOI 都不符合过滤条件的 POI 数量、总共的 POI 数量、已爬取的 POI 数量（匹配到、无 uid、无 AOI 三种情况的总数）、已爬取的 POI 数量占总数的百分比
+
+    <img src="images/running_process.png" width=80%>
 
 ## 配置说明
 
@@ -246,7 +248,7 @@ POI csv 读取 → 每个 POI 信息拼接 url → 一个 url 返回一组 json 
 
 * **百度地图地点检索 API 的并发上限是 30 QPS**，因此至少 `CONCURRENT_REQUESTS_PER_IP` 的值不应超过 30
 
-* 按照项目目前的设置，并发峰值在 10 QPS 左右，大约每小时能匹配到 2000 至 3000 条 AOI（对每个 POI 的地点检索结果下 10 个左右 uid 进行抓取的情况下）
+* 按照项目目前的设置，并发峰值在 10 QPS 左右，大约每小时能匹配完 4000 至 5000 条原始 POI（对地点检索结果下 10 个左右 uid 进行抓取的情况下）
 
 * **适度地设置抓取速度，建议不用追求最大化的并发**，减小爬取行为带来的负担和避免可能关闭 AOI 查询 url 的风险
 
