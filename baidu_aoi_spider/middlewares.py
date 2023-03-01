@@ -49,7 +49,7 @@ class BaiduAOIMiddleware(RetryMiddleware):
     def process_response(self, request, response, spider):
         if request.meta.get('dont_retry', False):
             return response
-        if response.status in [500, 502, 503, 504, 522, 524, 408, 403, 400, 302, 301]:
+        if response.status in self.retry_http_codes:
             request = self.alter_proxy_and_cookie(request)
             reason = response_status_message(response.status)
             return self._retry(request, reason, spider) or response
