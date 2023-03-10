@@ -1,10 +1,14 @@
-import json, random, pandas as pd
+import json
+import random
 from typing import List, Tuple
+
+import pandas as pd
 from scrapy.http import Response
 from shapely.geometry import Polygon
+
 from processor.repository import Repo
 from spatial.coords import bd09ll_to_wgs84, bd09mc_to_wgs84
-from spatial.geometry import within_distance, points_to_polygon
+from spatial.geometry import points_to_polygon, within_distance
 
 
 class APIHandler(object):
@@ -24,34 +28,34 @@ class APIHandler(object):
         urls = []
         df = Repo.file.copy()
         # store industry parameter in a column
-        if Repo._prim_ind != 'AS_VAR':
-            df['prim_ind'] = Repo._prim_ind
-        if Repo._sec_ind != 'AS_VAR':
-            df['sec_ind'] = Repo._sec_ind
+        if Repo._prim_ind != "AS_VAR":
+            df["prim_ind"] = Repo._prim_ind
+        if Repo._sec_ind != "AS_VAR":
+            df["sec_ind"] = Repo._sec_ind
         # concatenate urls
         for idx in df.index:
             # skip POIs that are already queried
-            if not pd.isna(df.loc[idx, 'status']):
+            if not pd.isna(df.loc[idx, "status"]):
                 continue
-            name = df.loc[idx, 'name']
-            lng, lat = df.loc[idx, 'lng_wgs84'], df.loc[idx, 'lat_wgs84']
-            prim_ind, sec_ind = df.loc[idx, 'prim_ind'], df.loc[idx, 'sec_ind']
-            url = f'https://api.map.baidu.com/place/v2/search?'\
-                  f'query={name}'\
-                  f'&location={lat},{lng}'\
-                  f'&radius={Repo._radius}'\
-                  f'&radius_limit={Repo._radius_limit}'\
-                  f'&ak={random.choice(Repo._ak_list)}'\
-                  f'&output=json&coord_type=1'
+            name = df.loc[idx, "name"]
+            lng, lat = df.loc[idx, "lng_wgs84"], df.loc[idx, "lat_wgs84"]
+            prim_ind, sec_ind = df.loc[idx, "prim_ind"], df.loc[idx, "sec_ind"]
+            url = (
+                f"https://api.map.baidu.com/place/v2/search?"
+                f"query={name}"
+                f"&location={lat},{lng}"
+                f"&radius={Repo._radius}"
+                f"&radius_limit={Repo._radius_limit}"
+                f"&ak={random.choice(Repo._ak_list)}"
+                f"&output=json&coord_type=1"
+            )
             url += cls._industry_url_segment(prim_ind, sec_ind)
             urls.append((idx, url))
         return urls
 
     @classmethod
     def extract_uid_name_rank(
-        cls,
-        idx: int,
-        response: Response
+        cls, idx: int, response: Response
     ) -> List[Tuple[str, str, int]]:
         """
         Parse the `Baidu uid` response, filter the results,
@@ -100,8 +104,8 @@ class APIHandler(object):
         ```
         """
         name_uid_rank = []
-        status = json.loads(response.text).get('status')
-        results = json.loads(response.text).get('results')
+        status = json.loads(response.text).get("status")
+        results = json.loads(response.text).get("results")
         # check status
         cls._check_status(status)
         # background POI property
@@ -113,9 +117,7 @@ class APIHandler(object):
                 u_property = cls._get_uid_property(result)
                 # keep the result if it passes all the rules
                 if cls._pass_filter_rules(**p_property, **u_property):
-                    name_uid_rank.append(
-                        (result['name'], result['uid'], rank + 1)
-                    )
+                    name_uid_rank.append((result["name"], result["uid"], rank + 1))
                 if Repo._use_first_uid and name_uid_rank:
                     break
         return name_uid_rank
@@ -125,8 +127,10 @@ class APIHandler(object):
         """
         Construct a `Baidu AOI` url with this AOI's `uid`.
         """
-        return f'https://map.baidu.com/?newmap=1&qt=ext&'\
-               f'uid={uid}&ext_ver=new&ie=utf-8&l=11'
+        return (
+            f"https://map.baidu.com/?newmap=1&qt=ext&"
+            f"uid={uid}&ext_ver=new&ie=utf-8&l=11"
+        )
 
     @staticmethod
     def get_polygon_geometry(response: Response) -> Polygon | None:
@@ -155,22 +159,23 @@ class APIHandler(object):
         ```
         """
         response = json.loads(response.text)
-        geo = response.get('content', {}).get('geo')
+        geo = response.get("content", {}).get("geo")
         if geo:
-            xys = geo.split('|')[2][2:-1].split(',')
+            xys = geo.split("|")[2][2:-1].split(",")
             # xys now looks like [x1, y1, x2, y2, ..., xn, yn]
             # convert it into the format [(x1, y1), (x2, y2), ..., (xn, yn)]
-            points = [bd09mc_to_wgs84(float(x), float(y))
-                      for x, y in zip(xys[::2], xys[1::2])]
+            points = [
+                bd09mc_to_wgs84(float(x), float(y)) for x, y in zip(xys[::2], xys[1::2])
+            ]
             return points_to_polygon(points)
 
     @staticmethod
     def _industry_url_segment(prim_ind: str, sec_ind: str) -> str:
         if prim_ind and sec_ind:
-            return f'&tag={prim_ind};{sec_ind}&scope=2'
+            return f"&tag={prim_ind};{sec_ind}&scope=2"
         elif prim_ind or sec_ind:
-            return f'&tag={prim_ind + sec_ind}&scope=2'
-        return '&scope=1'
+            return f"&tag={prim_ind + sec_ind}&scope=2"
+        return "&scope=1"
 
     @staticmethod
     def _check_status(status: int) -> None:
@@ -181,26 +186,26 @@ class APIHandler(object):
         if status == 0:
             return
         elif status // 100 == 2:
-            raise Exception(f'API Parameter Invalid: {status}.')
+            raise Exception(f"API Parameter Invalid: {status}.")
         elif status // 100 == 3:
-            raise Exception(f'API Verify Failure: {status}.')
+            raise Exception(f"API Verify Failure: {status}.")
         elif status // 100 == 4:
-            raise Exception(f'API Quota Failure: {status}.')
+            raise Exception(f"API Quota Failure: {status}.")
         elif status // 100 == 5:
-            raise Exception(f'API AK Failure: {status}.')
+            raise Exception(f"API AK Failure: {status}.")
         else:
-            raise Exception(f'API Error: {status}.')
+            raise Exception(f"API Error: {status}.")
 
     @staticmethod
     def _get_poi_property(df: pd.DataFrame, idx: int) -> dict:
         radius = Repo._radius / 1000  # convert to km
-        p_lng, p_lat = df.loc[idx, 'lng_wgs84'], df.loc[idx, 'lat_wgs84']
-        if Repo._prim_ind == 'AS_VAR':
-            p_prim_ind = df.loc[idx, 'prim_ind']
+        p_lng, p_lat = df.loc[idx, "lng_wgs84"], df.loc[idx, "lat_wgs84"]
+        if Repo._prim_ind == "AS_VAR":
+            p_prim_ind = df.loc[idx, "prim_ind"]
         else:
             p_prim_ind = Repo._prim_ind
-        if Repo._sec_ind == 'AS_VAR':
-            p_sec_ind = df.loc[idx, 'sec_ind']
+        if Repo._sec_ind == "AS_VAR":
+            p_sec_ind = df.loc[idx, "sec_ind"]
         else:
             p_sec_ind = Repo._sec_ind
         return dict(
@@ -214,11 +219,11 @@ class APIHandler(object):
     @staticmethod
     def _get_uid_property(result: dict) -> dict:
         return dict(
-            uid=result.get('uid'),
-            uid_name=result.get('name'),
-            u_lng=result.get('location', {}).get('lng'),  # of bd09ll CRS
-            u_lat=result.get('location', {}).get('lat'),
-            u_tag=result.get('detail_info', {}).get('tag'),
+            uid=result.get("uid"),
+            uid_name=result.get("name"),
+            u_lng=result.get("location", {}).get("lng"),  # of bd09ll CRS
+            u_lat=result.get("location", {}).get("lat"),
+            u_tag=result.get("detail_info", {}).get("tag"),
         )
 
     @staticmethod
@@ -243,9 +248,9 @@ class APIHandler(object):
             return False
         # 3. check if industry category is consistent
         if u_tag is None:
-            return True # if no industry category is provided, pass
-        elif ';' in u_tag:
-            u_prim_ind, u_sec_ind = u_tag.split(';')
+            return True  # if no industry category is provided, pass
+        elif ";" in u_tag:
+            u_prim_ind, u_sec_ind = u_tag.split(";")
             return (p_prim_ind == u_prim_ind) and (p_sec_ind == u_sec_ind)
         else:
             return (p_prim_ind in u_tag) or (p_sec_ind in u_tag)

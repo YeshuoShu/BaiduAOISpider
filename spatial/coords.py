@@ -2,7 +2,7 @@
 # https://github.com/dickwxyz/CoordinatesConverter
 
 import math
-from math import cos, sin, asin, sqrt
+from math import asin, cos, sin, sqrt
 from typing import Tuple
 
 # Basic Parameters:
@@ -15,23 +15,77 @@ ee = 0.00669342162296594323  # oblateness of the earth
 MC_BAND = [12890594.86, 8362377.87, 5591021, 3481989.83, 1678043.12, 0]
 MC2LL = [
     [
-        1.410526172116255e-8, 0.00000898305509648872, -1.9939833816331, 200.9824383106796, -187.2403703815547, 91.6087516669843, -23.38765649603339, 2.57121317296198, -0.03801003308653, 17337981.2
+        1.410526172116255e-8,
+        0.00000898305509648872,
+        -1.9939833816331,
+        200.9824383106796,
+        -187.2403703815547,
+        91.6087516669843,
+        -23.38765649603339,
+        2.57121317296198,
+        -0.03801003308653,
+        17337981.2,
     ],
     [
-        -7.435856389565537e-9, 0.000008983055097726239, -0.78625201886289, 96.32687599759846, -1.85204757529826, -59.36935905485877, 47.40033549296737, -16.50741931063887, 2.28786674699375, 10260144.86
+        -7.435856389565537e-9,
+        0.000008983055097726239,
+        -0.78625201886289,
+        96.32687599759846,
+        -1.85204757529826,
+        -59.36935905485877,
+        47.40033549296737,
+        -16.50741931063887,
+        2.28786674699375,
+        10260144.86,
     ],
     [
-        -3.030883460898826e-8, 0.00000898305509983578, 0.30071316287616, 59.74293618442277, 7.357984074871, -25.38371002664745, 13.45380521110908, -3.29883767235584, 0.32710905363475, 6856817.37
+        -3.030883460898826e-8,
+        0.00000898305509983578,
+        0.30071316287616,
+        59.74293618442277,
+        7.357984074871,
+        -25.38371002664745,
+        13.45380521110908,
+        -3.29883767235584,
+        0.32710905363475,
+        6856817.37,
     ],
     [
-        -1.981981304930552e-8, 0.000008983055099779535, 0.03278182852591, 40.31678527705744, 0.65659298677277, -4.44255534477492, 0.85341911805263, 0.12923347998204, -0.04625736007561, 4482777.06
+        -1.981981304930552e-8,
+        0.000008983055099779535,
+        0.03278182852591,
+        40.31678527705744,
+        0.65659298677277,
+        -4.44255534477492,
+        0.85341911805263,
+        0.12923347998204,
+        -0.04625736007561,
+        4482777.06,
     ],
     [
-        3.09191371068437e-9, 0.000008983055096812155, 0.00006995724062, 23.10934304144901, -0.00023663490511, -0.6321817810242, -0.00663494467273, 0.03430082397953, -0.00466043876332, 2555164.4
+        3.09191371068437e-9,
+        0.000008983055096812155,
+        0.00006995724062,
+        23.10934304144901,
+        -0.00023663490511,
+        -0.6321817810242,
+        -0.00663494467273,
+        0.03430082397953,
+        -0.00466043876332,
+        2555164.4,
     ],
     [
-        2.890871144776878e-9, 0.000008983055095805407, -3.068298e-8, 7.47137025468032, -0.00000353937994, -0.02145144861037, -0.00001234426596, 0.00010322952773, -0.00000323890364, 826088.5
-    ]
+        2.890871144776878e-9,
+        0.000008983055095805407,
+        -3.068298e-8,
+        7.47137025468032,
+        -0.00000353937994,
+        -0.02145144861037,
+        -0.00001234426596,
+        0.00010322952773,
+        -0.00000323890364,
+        826088.5,
+    ],
 ]
 
 
@@ -54,10 +108,10 @@ def wgs84_to_gcj02(lng: float, lat: float) -> Tuple[float, float]:
     rad_lat = lat / 180.0 * pi
 
     magic = math.sin(rad_lat)
-    magic = 1 - ee*magic*magic
+    magic = 1 - ee * magic * magic
     sqrt_magic = math.sqrt(magic)
 
-    d_lat = (d_lat * 180.0) / ((a * (1-ee)) / (magic*sqrt_magic) * pi)
+    d_lat = (d_lat * 180.0) / ((a * (1 - ee)) / (magic * sqrt_magic) * pi)
     d_lng = (d_lng * 180.0) / (a / sqrt_magic * math.cos(rad_lat) * pi)
     mg_lat = lat + d_lat
     mg_lng = lng + d_lng
@@ -83,47 +137,61 @@ def gcj02_to_wgs84(lng: float, lat: float) -> Tuple[float, float]:
     rad_lat = lat / 180.0 * pi
 
     magic = math.sin(rad_lat)
-    magic = 1 - ee*magic*magic
+    magic = 1 - ee * magic * magic
     sqrt_magic = math.sqrt(magic)
 
-    d_lat = (d_lat * 180.0) / ((a * (1-ee)) / (magic*sqrt_magic) * pi)
+    d_lat = (d_lat * 180.0) / ((a * (1 - ee)) / (magic * sqrt_magic) * pi)
     d_lng = (d_lng * 180.0) / (a / sqrt_magic * math.cos(rad_lat) * pi)
     mg_lat = lat + d_lat
     mg_lng = lng + d_lng
-    return lng*2 - mg_lng, lat*2 - mg_lat
+    return lng * 2 - mg_lng, lat * 2 - mg_lat
 
 
 def transform_lat(lng: float, lat: float) -> float:
-    ret = (-100.0
-           + 2.0*lng + 3.0*lat
-           + 0.2*lat*lat + 0.1*lng*lat
-           + 0.2*math.sqrt(math.fabs(lng)))
+    ret = (
+        -100.0
+        + 2.0 * lng
+        + 3.0 * lat
+        + 0.2 * lat * lat
+        + 0.1 * lng * lat
+        + 0.2 * math.sqrt(math.fabs(lng))
+    )
 
-    ret += (20.0 * math.sin(6.0*lng*pi)
-            + 20.0 * math.sin(2.0*lng*pi)) * 2.0 / 3.0
+    ret += (
+        (20.0 * math.sin(6.0 * lng * pi) + 20.0 * math.sin(2.0 * lng * pi)) * 2.0 / 3.0
+    )
 
-    ret += (20.0 * math.sin(lat*pi)
-            + 40.0 * math.sin(lat/3.0*pi)) * 2.0 / 3.0
+    ret += (20.0 * math.sin(lat * pi) + 40.0 * math.sin(lat / 3.0 * pi)) * 2.0 / 3.0
 
-    ret += (160.0 * math.sin(lat/12.0*pi)
-            + 320 * math.sin(lat*pi/30.0)) * 2.0 / 3.0
+    ret += (
+        (160.0 * math.sin(lat / 12.0 * pi) + 320 * math.sin(lat * pi / 30.0))
+        * 2.0
+        / 3.0
+    )
     return ret
 
 
 def transform_lng(lng: float, lat: float) -> float:
-    ret = (300.0
-           + lng + 2.0*lat
-           + 0.1*lng*lng + 0.1*lng*lat
-           + 0.1*math.sqrt(math.fabs(lng)))
+    ret = (
+        300.0
+        + lng
+        + 2.0 * lat
+        + 0.1 * lng * lng
+        + 0.1 * lng * lat
+        + 0.1 * math.sqrt(math.fabs(lng))
+    )
 
-    ret += (20.0 * math.sin(6.0*lng*pi)
-            + 20.0 * math.sin(2.0*lng*pi)) * 2.0 / 3.0
+    ret += (
+        (20.0 * math.sin(6.0 * lng * pi) + 20.0 * math.sin(2.0 * lng * pi)) * 2.0 / 3.0
+    )
 
-    ret += (20.0 * math.sin(lng*pi)
-            + 40.0 * math.sin(lng/3.0*pi)) * 2.0 / 3.0
+    ret += (20.0 * math.sin(lng * pi) + 40.0 * math.sin(lng / 3.0 * pi)) * 2.0 / 3.0
 
-    ret += (150.0 * math.sin(lng/12.0*pi)
-            + 300.0 * math.sin(lng/30.0*pi)) * 2.0 / 3.0
+    ret += (
+        (150.0 * math.sin(lng / 12.0 * pi) + 300.0 * math.sin(lng / 30.0 * pi))
+        * 2.0
+        / 3.0
+    )
     return ret
 
 
@@ -156,10 +224,10 @@ def gcj02_to_bd09ll(lng: float, lat: float) -> Tuple[float, float]:
     Returns:
         tuple(float, float): (bd09ll_lng, bd09ll_lat)
     """
-    z = math.sqrt(lng*lng + lat*lat) + 0.00002 * math.sin(lat*x_pi)
-    theta = math.atan2(lat, lng) + 0.000003 * math.cos(lng*x_pi)
-    bd_lng = z*math.cos(theta) + 0.0065
-    bd_lat = z*math.sin(theta) + 0.006
+    z = math.sqrt(lng * lng + lat * lat) + 0.00002 * math.sin(lat * x_pi)
+    theta = math.atan2(lat, lng) + 0.000003 * math.cos(lng * x_pi)
+    bd_lng = z * math.cos(theta) + 0.0065
+    bd_lat = z * math.sin(theta) + 0.006
     return bd_lng, bd_lat
 
 
@@ -176,8 +244,8 @@ def bd09ll_to_gcj02(bd_lon: float, bd_lat: float) -> Tuple[float, float]:
     """
     x = bd_lon - 0.0065
     y = bd_lat - 0.006
-    z = math.sqrt(x*x + y*y) - 0.00002 * math.sin(y*x_pi)
-    theta = math.atan2(y, x) - 0.000003 * math.cos(x*x_pi)
+    z = math.sqrt(x * x + y * y) - 0.00002 * math.sin(y * x_pi)
+    theta = math.atan2(y, x) - 0.000003 * math.cos(x * x_pi)
     gg_lng = z * math.cos(theta)
     gg_lat = z * math.sin(theta)
     return gg_lng, gg_lat
@@ -232,10 +300,17 @@ def bd09mc_to_bd09ll(x1: float, y1: float) -> Tuple[float, float]:
         if y1 > MC_BAND[cE]:
             cF = MC2LL[cE]
             break
-    xTemp = cF[0] + cF[1]*x1
+    xTemp = cF[0] + cF[1] * x1
     cC = y1 / cF[9]
-    yTemp = cF[2] + cF[3]*cC + cF[4]*cC**2 + cF[5]*cC**3\
-            + cF[6]*cC**4 + cF[7]*cC**5 + cF[8]*cC**6
+    yTemp = (
+        cF[2]
+        + cF[3] * cC
+        + cF[4] * cC**2
+        + cF[5] * cC**3
+        + cF[6] * cC**4
+        + cF[7] * cC**5
+        + cF[8] * cC**6
+    )
     return xTemp, yTemp
 
 
@@ -255,12 +330,7 @@ def bd09mc_to_wgs84(x1: float, y1: float) -> Tuple[float, float]:
     return x3, y3
 
 
-def cal_distance(
-    lon1: float,
-    lat1: float,
-    lon2: float,
-    lat2: float
-) -> float:
+def cal_distance(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
     """
     Calculate the `spherical` distance between two points.
 
@@ -273,9 +343,10 @@ def cal_distance(
     Returns:
         float: spherical distance, in `kilometers`
     """
-    d_lat = abs(lat1/180.0*pi - lat2/180.0*pi)
-    d_lon = abs(lon1/180.0*pi - lon2/180.0*pi)
-    a = sin(d_lat/2) * sin(d_lat/2)\
-        + cos(lat1/180.0*pi) * cos(lat2/180.0*pi) * sin(d_lon/2) * sin(d_lon/2)
+    d_lat = abs(lat1 / 180.0 * pi - lat2 / 180.0 * pi)
+    d_lon = abs(lon1 / 180.0 * pi - lon2 / 180.0 * pi)
+    a = sin(d_lat / 2) * sin(d_lat / 2) + cos(lat1 / 180.0 * pi) * cos(
+        lat2 / 180.0 * pi
+    ) * sin(d_lon / 2) * sin(d_lon / 2)
     dist = 2 * 6378.137 * asin(sqrt(a))
     return dist

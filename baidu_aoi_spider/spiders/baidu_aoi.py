@@ -1,12 +1,21 @@
 import scrapy
 from scrapy.http import Request
-from processor import Repo, Validator, Counter, Logger
-from processor import FileOperator, APIHandler, AOIContainer
+
+from processor import (
+    AOIContainer,
+    APIHandler,
+    Counter,
+    FileOperator,
+    Logger,
+    Repo,
+    Validator,
+)
+
 
 class BaiduAOISpider(scrapy.Spider):
-    name = 'BaiduAOI'
+    name = "BaiduAOI"
     updating_settings = dict()
-    allowed_domains = ['map.baidu.com', 'api.map.baidu.com']
+    allowed_domains = ["map.baidu.com", "api.map.baidu.com"]
 
     # ------------------------------ initialization ------------------------------ #
 
@@ -16,7 +25,9 @@ class BaiduAOISpider(scrapy.Spider):
         spider = super(BaiduAOISpider, cls).from_crawler(
             crawler, crawler.settings.copy_to_dict()
         )
-        crawler.signals.connect(spider.close_spider, signal=scrapy.signals.spider_closed)
+        crawler.signals.connect(
+            spider.close_spider, signal=scrapy.signals.spider_closed
+        )
         return spider
 
     def __init__(self, settings):
@@ -33,7 +44,7 @@ class BaiduAOISpider(scrapy.Spider):
         # counter and AOI container initialization
         Counter.boot()
         AOIContainer.mold()
-        
+
     # -------------------------------- main spider ------------------------------- #
 
     def start_requests(self):
@@ -58,7 +69,7 @@ class BaiduAOISpider(scrapy.Spider):
                     yield self.request_aoi(url, idx=idx, uid_name=uid_name, rank=rank)
             else:
                 # no uid found, skip this POI
-                Repo.file.loc[idx, 'status'] = 'No Uid'
+                Repo.file.loc[idx, "status"] = "No Uid"
                 Logger.log_progress()
         except Exception as e:
             Logger.log_uid_fail(e, idx)
@@ -83,43 +94,46 @@ class BaiduAOISpider(scrapy.Spider):
                 if best_aoi:
                     FileOperator.write_aoi_and_status(idx, best_aoi)
                 else:
-                    Repo.file.loc[idx, 'status'] = 'No Geometry'
+                    Repo.file.loc[idx, "status"] = "No Geometry"
                 Logger.log_progress()
             # update file periodically
             if Counter.reach_update_interval():
                 FileOperator.save_file()
                 Logger.log_update()
-    
+
     def close_spider(self):
         Logger.log_finish()
         FileOperator.save_file()
-    
+
     # ---------------------------------- utility --------------------------------- #
-            
+
     def request(self, url: str, **kwargs) -> Request:
-        return scrapy.Request(url=url, **kwargs,
-                              dont_filter=True,
-                              meta={'proxy_enabled': Repo._proxy_enabled})
-        
+        return scrapy.Request(
+            url=url,
+            **kwargs,
+            dont_filter=True,
+            meta={"proxy_enabled": Repo._proxy_enabled}
+        )
+
     def request_uid(self, url: str, **kwargs) -> Request:
         params = dict(
             callback=self.parse_uid,
-            headers={'Host': 'api.map.baidu.com'},
+            headers={"Host": "api.map.baidu.com"},
             cb_kwargs=dict(**kwargs),
         )
         return self.request(url, **params)
-    
+
     def request_aoi(self, url: str, **kwargs) -> Request:
         params = dict(
             callback=self.parse_aoi,
-            headers={'Host': 'map.baidu.com'},
+            headers={"Host": "map.baidu.com"},
             cb_kwargs=dict(**kwargs),
         )
         return self.request(url, **params)
 
     def check_retry_times(self, response) -> None:
         if isinstance(response, str):
-            if response.startswith('Gave up retrying'):
+            if response.startswith("Gave up retrying"):
                 raise Exception(response)
 
     def deep_update(self, base_dict: dict, updating_dict: dict) -> dict:
