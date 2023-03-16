@@ -26,7 +26,7 @@ class Validator(object):
             - sec_ind (str):  POI's secondary industry classification
         """
         for col in ["name", "lng", "lat"]:
-            if not col in Repo.file.columns:
+            if col not in Repo.file.columns:
                 raise ValueError(f'Column "{col}" is missing.')
         cls._check_optional_col("prim_ind", Repo._prim_ind)
         cls._check_optional_col("sec_ind", Repo._sec_ind)
@@ -72,10 +72,10 @@ class Validator(object):
         # radius parameter must be a positive number
         cls._verify_non_negative_num(Repo._radius, "radius")
         # radius_limit must be one of 'true' or 'false'
-        if not Repo._radius_limit in ["true", "false"]:
+        if Repo._radius_limit not in ["true", "false"]:
             raise ValueError('"radius_limit" must be "true" or "false".')
         # crs must be one of 'gcj02', 'bd09' or 'wgs84'
-        if not Repo._crs in ["gcj02", "bd09", "wgs84"]:
+        if Repo._crs not in ["gcj02", "bd09", "wgs84"]:
             raise ValueError('"crs" must be "gcj02", "bd09" or "wgs84".')
 
     @classmethod
@@ -90,9 +90,9 @@ class Validator(object):
         # sorting values must be one of 0 or 1 (or -1 for 'sort_by_area')
         for sorting_type, value in Repo._sortings.items():
             if sorting_type == "sort_by_area":
-                if not value in [0, 1, -1]:
+                if value not in [0, 1, -1]:
                     raise ValueError(f'"{sorting_type}" must be 0 or ±1.')
-            elif not value in [0, 1]:
+            elif value not in [0, 1]:
                 raise ValueError(f'"{sorting_type}" must be 0 or 1.')
         # at least one kind of sorting must be enabled
         if not any(Repo._sortings.values()):
@@ -101,7 +101,7 @@ class Validator(object):
     @staticmethod
     def _check_optional_col(name: str, value: str) -> None:
         if value == "AS_VAR":
-            if not name in Repo.file.columns:
+            if name not in Repo.file.columns:
                 raise ValueError(f'Column "{name}" is missing.')
 
     @classmethod
