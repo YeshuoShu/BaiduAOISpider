@@ -309,7 +309,7 @@ POI csv 读取 → 每个 POI 信息拼接 url → 一个 url 返回一组 json 
       }
       ```
 
-    * 如果需要开启，但是 POI 类别不同，需要：（1）将参数值设置为 `AS_VAR`（as a variable 的意思）；（2）在 csv 文件中添加对应的列
+    * 如果需要开启，但是 POI 类别不同，需要：（1）将参数值设置为 `VAR`（作为变量输入的意思）；（2）在 csv 文件中添加对应的列
 
   * **搜索半径参数**
 
@@ -451,8 +451,8 @@ BaiduAOISpider
         PROXY_ENABLED = False,
         UPDATE_INTERVAL = 20,
         API_PARAMS = {
-            'prim_ind': 'AS_VAR',
-            'sec_ind': 'AS_VAR',
+            'prim_ind': 'VAR',
+            'sec_ind': 'VAR',
             'crs': 'bd09',
         },
         FILTER_RULES = {

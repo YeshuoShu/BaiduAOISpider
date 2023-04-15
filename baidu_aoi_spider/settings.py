@@ -79,7 +79,7 @@ API_PARAMS = {
     # 1. Primary/Secondary industry classification (Optional)
     # Please re-classify according to Baidu standard:
     # see https://lbsyun.baidu.com/index.php?title=open/poitags
-    "prim_ind": "",  # (1) ''; (2) a string; (3) 'AS_VAR'
+    "prim_ind": "",  # (1) ''; (2) a string; (3) 'VAR'
     "sec_ind": "",  # same as above
     # 2.1 Retrieval radius
     # To avoid missing out POIs, it is recommended to set it slightly higher, e.g. 2000.

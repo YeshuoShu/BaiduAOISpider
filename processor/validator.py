@@ -100,7 +100,7 @@ class Validator(object):
 
     @staticmethod
     def _check_optional_col(name: str, value: str) -> None:
-        if value == "AS_VAR":
+        if value == "VAR":
             if name not in Repo.file.columns:
                 raise ValueError(f'Column "{name}" is missing.')
 

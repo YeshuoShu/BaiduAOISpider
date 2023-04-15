@@ -28,9 +28,9 @@ class APIHandler(object):
         urls = []
         df = Repo.file.copy()
         # store industry parameter in a column
-        if Repo._prim_ind != "AS_VAR":
+        if Repo._prim_ind != "VAR":
             df["prim_ind"] = Repo._prim_ind
-        if Repo._sec_ind != "AS_VAR":
+        if Repo._sec_ind != "VAR":
             df["sec_ind"] = Repo._sec_ind
         # concatenate urls
         for idx in df.index:
@@ -200,11 +200,11 @@ class APIHandler(object):
     def _get_poi_property(df: pd.DataFrame, idx: int) -> dict:
         radius = Repo._radius / 1000  # convert to km
         p_lng, p_lat = df.loc[idx, "lng_wgs84"], df.loc[idx, "lat_wgs84"]
-        if Repo._prim_ind == "AS_VAR":
+        if Repo._prim_ind == "VAR":
             p_prim_ind = df.loc[idx, "prim_ind"]
         else:
             p_prim_ind = Repo._prim_ind
-        if Repo._sec_ind == "AS_VAR":
+        if Repo._sec_ind == "VAR":
             p_sec_ind = df.loc[idx, "sec_ind"]
         else:
             p_sec_ind = Repo._sec_ind

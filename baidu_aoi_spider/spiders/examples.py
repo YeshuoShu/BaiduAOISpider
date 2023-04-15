@@ -27,8 +27,8 @@ class Example2(BaiduAOISpider):
         PROXY_ENABLED=False,
         UPDATE_INTERVAL=20,
         API_PARAMS={
-            "prim_ind": "AS_VAR",
-            "sec_ind": "AS_VAR",
+            "prim_ind": "VAR",
+            "sec_ind": "VAR",
             "crs": "bd09",
         },
         FILTER_RULES={
