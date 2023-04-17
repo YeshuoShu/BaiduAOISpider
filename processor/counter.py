@@ -64,7 +64,7 @@ class Counter(object):
 
     @classmethod
     def _count_missing(cls) -> int:
-        return cls._poi_to_crawl - sum(cls._count_status())
+        return cls._poi_num - sum(cls._count_status())
 
     @classmethod
     def _cal_speed_xTime(cls) -> Tuple[str, str]:
