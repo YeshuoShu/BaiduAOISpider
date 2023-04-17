@@ -128,7 +128,7 @@ class AOI_list(object):
 class AOIContainer(object):
     @classmethod
     def mold(cls) -> None:
-        cls._df = pd.DataFrame({"aoi_list": [AOI_list(idx) for idx in Repo.file.index]})
+        cls._dict = {idx: AOI_list(idx) for idx in Repo.file.index}
         logging.warning("(6/6) AOIContainer is ready.")
 
     @classmethod
@@ -141,8 +141,8 @@ class AOIContainer(object):
             - The AOI's name is not too different from the POI's name.
         """
         aoi = AOI(rank, uid_name, geometry)
-        cls._df.loc[idx, "aoi_list"]._append(aoi)
+        cls._dict[idx]._append(aoi)
 
     @classmethod
     def get_best_aoi(cls, idx: int) -> AOI:
-        return cls._df.loc[idx, "aoi_list"]._get_best_aoi()
+        return cls._dict[idx]._get_best_aoi()
