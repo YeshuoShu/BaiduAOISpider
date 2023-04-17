@@ -128,21 +128,45 @@ class AOI_list(object):
 class AOIContainer(object):
     @classmethod
     def mold(cls) -> None:
+        """Initialize the `AOIContainer` class before logging."""
         cls._dict = {idx: AOI_list(idx) for idx in Repo.file.index}
         logging.warning("(6/6) AOIContainer is ready.")
 
     @classmethod
     def append(cls, idx: int, rank: int, uid_name: str, geometry: Polygon) -> None:
-        """
-        Store an AOI in the `AOI_list` of its corresponding POI,
-        if this AOI satisfies all the following requirements:
-            - The bounding box of the AOI contains the corresponding POI.
-            - The AOI's area is not too big or too small.
-            - The AOI's name is not too different from the POI's name.
+        """Append an AOI conditionally in the `AOIList` of its corresponding POI.
+
+        AOI will be appended if it satisfies all the following requirements:
+        - The bounding box of the AOI contains the corresponding POI.
+        - The AOI's area is not too big or too small.
+        - The AOI's name is not too different from the POI's name.
+
+        Parameters
+        ----------
+        idx : int
+            POI index.
+        rank : int
+            AOI search rank.
+        uid_name : str
+            AOI uid_name.
+        geometry : Polygon
+            AOI geometry.
         """
         aoi = AOI(rank, uid_name, geometry)
         cls._dict[idx]._append(aoi)
 
     @classmethod
     def get_best_aoi(cls, idx: int) -> AOI:
+        """Get the best AOI of the POI with index `idx`.
+
+        Parameters
+        ----------
+        idx : int
+            POI index.
+
+        Returns
+        -------
+        AOI
+            The best AOI of the POI with index `idx`.
+        """
         return cls._dict[idx]._get_best_aoi()
