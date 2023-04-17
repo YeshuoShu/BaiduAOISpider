@@ -1,4 +1,5 @@
 import scrapy
+from scrapy import signals
 from scrapy.http import Request
 
 from processor import (
@@ -25,9 +26,7 @@ class BaiduAOISpider(scrapy.Spider):
         spider = super(BaiduAOISpider, cls).from_crawler(
             crawler, crawler.settings.copy_to_dict()
         )
-        crawler.signals.connect(
-            spider.close_spider, signal=scrapy.signals.spider_closed
-        )
+        crawler.signals.connect(spider.close_spider, signal=signals.spider_closed)
         return spider
 
     def __init__(self, settings):
