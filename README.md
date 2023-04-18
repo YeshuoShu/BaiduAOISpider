@@ -8,7 +8,7 @@
 
 * 需要提前准备目标 POI 数据， POI 获取方法可参考其他项目例如 [AMapPoi](https://github.com/Civitasv/AMapPoi)
 
-* 项目内可以选用一定的反爬手段，包括：随机 user-agent、随机 cookie、使用随机代理[^3]
+* 项目内可以选用一些简单反爬手段，包括：随机 user-agent、随机 cookie、使用随机代理[^3]
 
 * 爬取结果和爬取状态直接保存在原始 POI 数据 csv 上，可以随时中断、继续爬取和重新爬取
 
